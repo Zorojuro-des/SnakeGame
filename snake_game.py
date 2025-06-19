@@ -3,7 +3,7 @@ import pygame
 import random
 
 CELL_SIZE = 20
-GRID_SIZE = 20
+GRID_SIZE = 30
 SCREEN_SIZE = CELL_SIZE * GRID_SIZE
 
 UP = (0, -1)

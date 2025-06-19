@@ -7,7 +7,7 @@ import random
 class SnakeEnv(gym.Env):
     def __init__(self):
         super().__init__()
-        self.grid_size = 10
+        self.grid_size = 30
         self.action_space = spaces.Discrete(4)
         self.observation_space = spaces.Box(low=0, high=1, shape=(self.grid_size, self.grid_size, 3), dtype=np.uint8)
         self.reset()
