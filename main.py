@@ -18,7 +18,7 @@ human_score = 0
 # RL Agent
 rl_env = SnakeEnv()
 rl_model = DQN.load("rl_agent/model")
-rl_obs = rl_env.reset()
+rl_obs, _ = rl_env.reset()
 ai = Snake({'head': COLORS['ai_head'], 'body': COLORS['ai_body']}, (15, 15))
 agent_score = 0
 
@@ -78,7 +78,7 @@ while True:
             human_score = 0
 
             rl_env = SnakeEnv()
-            rl_obs = rl_env.reset()
+            rl_obs, _ = rl_env.reset()
             ai = Snake({'head': COLORS['ai_head'], 'body': COLORS['ai_body']}, (15, 15))
             agent_score = 0
 
@@ -105,7 +105,7 @@ while True:
 
         # RL Agent move
         action, _ = rl_model.predict(rl_obs)
-        rl_obs, _, rl_done, _ = rl_env.step(action)
+        rl_obs, _, rl_done, _ , _= rl_env.step(action)
 
         ai.body = rl_env.snake_body.copy()
         ai.direction = rl_env.direction
