@@ -15,7 +15,7 @@ human = Snake((0, 255, 0), (5, 5))
 human_food = Food(human.body)
 human_score = 0
 
-# RL Agent setup
+# RL Agent
 env = SnakeEnv()
 model = DQN.load("rl_agent/model")
 obs = env.reset()
@@ -40,43 +40,48 @@ while True:
     if keys[pygame.K_LEFT]: human.change_direction(LEFT)
     if keys[pygame.K_RIGHT]: human.change_direction(RIGHT)
 
-    # Move human
+    # Human move and eat
     human.move()
-
-    # Human eats food
     if human.get_head() == human_food.position:
         human.grow = True
         human_score += 1
         human_food = Food(human.body)
 
-    # Check human death
+    # Human collision check
     if human.collides_with_self():
-        draw_text("Game Over (Human)", (180, 280))
+        winner = "AI Wins!" if agent_score >= human_score else "Human Wins!"
+        draw_text(f"Game Over: {winner}", (180, 300))
         pygame.display.flip()
         pygame.time.wait(2000)
         pygame.quit()
         sys.exit()
 
-    # AI Agent
+    # RL Agent logic
     action, _ = model.predict(obs)
     obs, reward, done, _ = env.step(action)
 
     if done:
-        draw_text("AI Crashed", (200, 320))
+        winner = "Human Wins!" if human_score > agent_score else "AI Wins!"
+        draw_text(f"Game Over: {winner}", (180, 300))
         pygame.display.flip()
-        pygame.time.wait(1000)
-        obs = env.reset()
-        agent_score = 0
-
-    # Draw everything
+        pygame.time.wait(2000)
+        pygame.quit()
+        sys.exit()
+    
+    # Food drawing
     human_food.draw(screen)
-    human.draw(screen)
 
-    for pos in env.snake_body:
-        pygame.draw.rect(screen, (0, 0, 255),
-                         pygame.Rect(pos[0] * CELL_SIZE, pos[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+    # Human snake drawing (head: bright green, tail: dark green)
+    for i, segment in enumerate(human.body):
+        color = (0, 200, 0) if i > 0 else (0, 255, 0)
+        pygame.draw.rect(screen, color, pygame.Rect(segment[0]*CELL_SIZE, segment[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-    # Scores
+    # AI snake drawing (head: bright blue, tail: dark blue)
+    for i, segment in enumerate(env.snake_body):
+        color = (0, 0, 200) if i > 0 else (0, 0, 255)
+        pygame.draw.rect(screen, color, pygame.Rect(segment[0]*CELL_SIZE, segment[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+    # Scoreboard
     draw_text(f"Human Score: {human_score}", (10, 10))
     draw_text(f"AI Score: {agent_score}", (400, 10))
 
